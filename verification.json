@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-07-20T03:14:54.817Z",
+  "viewport": "1024x1536 + 390x844",
+  "tests": [
+    {
+      "name": "Dashboard renders",
+      "passed": true
+    },
+    {
+      "name": "Fluid log updates dashboard",
+      "passed": true
+    },
+    {
+      "name": "Medication completion updates state",
+      "passed": true
+    },
+    {
+      "name": "Message can be sent",
+      "passed": true
+    },
+    {
+      "name": "Route Home renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route My Health renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Treatments renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Medications renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Diet & Nutrition renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Fluid Tracker renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Appointments renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Lab Results renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Education renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Messages renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Support renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Route Settings renders without page overflow",
+      "passed": true
+    },
+    {
+      "name": "Mobile drawer navigation works",
+      "passed": true
+    },
+    {
+      "name": "Mobile viewport has no horizontal overflow",
+      "passed": true
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,2340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Mykit Annotatable Canvas</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{width:100%;height:100%;margin:0}body{box-sizing:border-box;background:inherit}iframe{display:block;width:100%;height:100%;margin:0;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts allow-same-origin allow-downloads" referrerpolicy="no-referrer" title="Mykit Annotatable Canvas" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Mykit Annotatable Canvas&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(--background) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: light-dark(rgb(255 255 255), rgb(24 24 24));
+  --foreground: light-dark(rgb(26 28 31), rgb(255 255 255));
+  --card: color-mix(in oklab, var(--foreground) 5%, transparent);
+  --card-foreground: var(--foreground);
+  --popover: light-dark(rgb(255 255 255), rgb(45 45 45));
+  --popover-foreground: var(--foreground);
+  --primary: light-dark(rgb(51 156 255), rgb(131 195 255));
+  --primary-foreground: light-dark(rgb(255 255 255), rgb(13 13 13));
+  --secondary: light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: light-dark(
+    rgb(26 28 31 / 49.4%),
+    rgb(255 255 255 / 49.8%)
+  );
+  --accent: light-dark(rgb(229 242 255), rgb(13 39 63));
+  --accent-foreground: var(--primary);
+  --destructive: light-dark(rgb(226 85 7), rgb(255 133 73));
+  --border: light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%));
+  --input: light-dark(
+    rgb(26 28 31 / 11.8%),
+    color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+  );
+  --ring: light-dark(rgb(51 156 255), rgb(131 195 255 / 76%));
+  --font-size-base: 14px;
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: 12.5px;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+  --color-background-primary: var(--background);
+  --color-text-primary: var(--foreground);
+  --color-border-secondary: var(--border);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--viz-font-weight-medium);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+    [aria-pressed=&quot;true&quot;],
+    [aria-selected=&quot;true&quot;],
+    .is-selected
+  ) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;div id=&quot;mykit-interactive-canvas&quot; class=&quot;mykit-canvas&quot;&gt;
+  &lt;div class=&quot;canvas-topbar&quot;&gt;
+  &lt;div class=&quot;viz-controls canvas-controls&quot;&gt;
+    &lt;label class=&quot;form-label&quot; for=&quot;mykit-canvas-zoom&quot;&gt;
+      Zoom &lt;output id=&quot;mykit-canvas-zoom-value&quot;&gt;92%&lt;/output&gt;
+      &lt;input id=&quot;mykit-canvas-zoom&quot; class=&quot;form-range&quot; type=&quot;range&quot; min=&quot;72&quot; max=&quot;110&quot; value=&quot;92&quot; step=&quot;1&quot;&gt;
+    &lt;/label&gt;
+    &lt;span id=&quot;mykit-canvas-instruction&quot; class=&quot;text-small text-muted&quot;&gt;Move nodes or select one to trace its connections&lt;/span&gt;
+    &lt;span class=&quot;text-small text-muted&quot;&gt;Drag nodes to rearrange · Select a node to trace its connections&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;viz-controls annotation-toolbar&quot; role=&quot;group&quot; aria-label=&quot;Annotation tools&quot;&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-canvas-tool=&quot;move&quot; aria-pressed=&quot;true&quot;&gt;&lt;i data-lucide=&quot;move&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Move &amp;amp; select&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-canvas-tool=&quot;draw&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;pencil&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Draw&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn&quot; data-canvas-tool=&quot;note&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;sticky-note&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Add note&lt;/button&gt;
+    &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; id=&quot;mykit-canvas-undo&quot; disabled&gt;&lt;i data-lucide=&quot;undo-2&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Undo&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;canvas-layout&quot;&gt;
+  &lt;div class=&quot;card canvas-field&quot; aria-label=&quot;Interactive canvas showing how myKIT features connect&quot;&gt;
+    &lt;svg class=&quot;canvas-edges&quot; aria-hidden=&quot;true&quot;&gt;&lt;/svg&gt;
+    &lt;svg class=&quot;canvas-annotations&quot; viewBox=&quot;0 0 1000 1000&quot; role=&quot;img&quot; aria-label=&quot;Freehand annotations&quot;&gt;&lt;title&gt;Freehand annotations added to the myKIT canvas&lt;/title&gt;&lt;/svg&gt;
+    &lt;div class=&quot;canvas-notes&quot; aria-label=&quot;Annotation notes&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;canvas-world&quot;&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn btn-primary canvas-node&quot; data-node=&quot;mykit&quot; data-group=&quot;root&quot; aria-pressed=&quot;true&quot;&gt;&lt;i data-lucide=&quot;heart-pulse&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;myKIT&lt;/span&gt;&lt;/button&gt;
+
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-k node-section&quot; data-node=&quot;kidney&quot; data-group=&quot;kidney&quot; aria-pressed=&quot;false&quot;&gt;&lt;span class=&quot;node-letter&quot;&gt;K&lt;/span&gt;&lt;span&gt;&lt;strong&gt;myKidney&lt;/strong&gt;&lt;small&gt;Care journey&lt;/small&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-k&quot; data-node=&quot;overview&quot; data-group=&quot;kidney&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;house&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Kidney overview&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-k&quot; data-node=&quot;treatments&quot; data-group=&quot;kidney&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;briefcase-medical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Treatments&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-k&quot; data-node=&quot;access&quot; data-group=&quot;kidney&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;activity&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Vascular access&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-k&quot; data-node=&quot;transplant&quot; data-group=&quot;kidney&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;hospital&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Transplant path&lt;/span&gt;&lt;/button&gt;
+
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-i node-section&quot; data-node=&quot;insights&quot; data-group=&quot;insights&quot; aria-pressed=&quot;false&quot;&gt;&lt;span class=&quot;node-letter&quot;&gt;I&lt;/span&gt;&lt;span&gt;&lt;strong&gt;myInsights&lt;/strong&gt;&lt;small&gt;Understand change&lt;/small&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-i&quot; data-node=&quot;reports&quot; data-group=&quot;insights&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;file-chart-column&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Health reports&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-i&quot; data-node=&quot;labs&quot; data-group=&quot;insights&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;flask-conical&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Lab results&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-i&quot; data-node=&quot;deep-dives&quot; data-group=&quot;insights&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;scan-search&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Deep dives&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-i&quot; data-node=&quot;patterns&quot; data-group=&quot;insights&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;chart-no-axes-combined&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Trends &amp;amp; patterns&lt;/span&gt;&lt;/button&gt;
+
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t node-section&quot; data-node=&quot;tools&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;span class=&quot;node-letter&quot;&gt;T&lt;/span&gt;&lt;span&gt;&lt;strong&gt;myTools&lt;/strong&gt;&lt;small&gt;Take action&lt;/small&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;medications&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;pill&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Medications&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;food&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;utensils&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Food &amp;amp; nutrition&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;fluid&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;droplets&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Fluid tracker&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;appointments&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;calendar-days&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Appointments&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;education&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;book-open&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Education&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-t&quot; data-node=&quot;messages&quot; data-group=&quot;tools&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;messages-square&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Messages &amp;amp; support&lt;/span&gt;&lt;/button&gt;
+
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-shared&quot; data-node=&quot;capture&quot; data-group=&quot;shared&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;camera&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Capture &amp;amp; upload&lt;/span&gt;&lt;/button&gt;
+      &lt;button type=&quot;button&quot; class=&quot;btn viz-tile canvas-node node-shared&quot; data-node=&quot;adherence&quot; data-group=&quot;shared&quot; aria-pressed=&quot;false&quot;&gt;&lt;i data-lucide=&quot;badge-check&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;&lt;span&gt;Treatment adherence&lt;/span&gt;&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;aside class=&quot;card canvas-detail&quot; aria-live=&quot;polite&quot;&gt;
+    &lt;div class=&quot;detail-heading&quot;&gt;
+      &lt;span class=&quot;viz-badge&quot; id=&quot;mykit-canvas-group&quot;&gt;myKIT system&lt;/span&gt;
+      &lt;h3 id=&quot;mykit-canvas-selection&quot;&gt;myKIT&lt;/h3&gt;
+      &lt;p id=&quot;mykit-canvas-description&quot;&gt;Connects myKidney, myInsights, and myTools into one coordinated kidney health kit.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;detail-section&quot;&gt;
+      &lt;small&gt;Purpose&lt;/small&gt;
+      &lt;strong id=&quot;mykit-canvas-purpose&quot;&gt;Coordinate the full kidney-care experience&lt;/strong&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;detail-section&quot;&gt;
+      &lt;small&gt;What lives here&lt;/small&gt;
+      &lt;p id=&quot;mykit-canvas-includes&quot;&gt;Care journey, health understanding, and daily action tools.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;detail-section&quot;&gt;
+      &lt;small&gt;Direct connections&lt;/small&gt;
+      &lt;div class=&quot;detail-chips&quot; id=&quot;mykit-canvas-connections&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;detail-flow&quot;&gt;
+      &lt;div&gt;
+        &lt;small&gt;Receives from&lt;/small&gt;
+        &lt;div class=&quot;detail-chips&quot; id=&quot;mykit-canvas-inputs&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div&gt;
+        &lt;small&gt;Supports and updates&lt;/small&gt;
+        &lt;div class=&quot;detail-chips&quot; id=&quot;mykit-canvas-outputs&quot;&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;section class=&quot;knowledge-workspace&quot; aria-labelledby=&quot;mykit-workspace-title&quot;&gt;
+      &lt;div class=&quot;workspace-heading&quot;&gt;
+        &lt;div&gt;
+          &lt;span class=&quot;viz-badge&quot; id=&quot;mykit-entry-count&quot;&gt;0 saved&lt;/span&gt;
+          &lt;h3 id=&quot;mykit-workspace-title&quot;&gt;Mind dump&lt;/h3&gt;
+        &lt;/div&gt;
+        &lt;span class=&quot;text-small text-muted&quot; id=&quot;mykit-save-status&quot;&gt;Saved locally&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;label class=&quot;form-label&quot; for=&quot;mykit-quick-entry&quot;&gt;
+        Add anything
+        &lt;textarea id=&quot;mykit-quick-entry&quot; class=&quot;form-control&quot; rows=&quot;4&quot; placeholder=&quot;Drop an idea, question, task, symptom, care update, or reminder here…&quot;&gt;&lt;/textarea&gt;
+      &lt;/label&gt;
+
+      &lt;div class=&quot;workspace-fields&quot;&gt;
+        &lt;label class=&quot;form-label&quot; for=&quot;mykit-entry-type&quot;&gt;
+          Type
+          &lt;select id=&quot;mykit-entry-type&quot; class=&quot;form-select&quot;&gt;
+            &lt;option value=&quot;note&quot;&gt;Note&lt;/option&gt;
+            &lt;option value=&quot;idea&quot;&gt;Idea&lt;/option&gt;
+            &lt;option value=&quot;question&quot;&gt;Question&lt;/option&gt;
+            &lt;option value=&quot;task&quot;&gt;Task&lt;/option&gt;
+            &lt;option value=&quot;record&quot;&gt;Health record&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/label&gt;
+        &lt;label class=&quot;form-label&quot; for=&quot;mykit-entry-node&quot;&gt;
+          File under
+          &lt;select id=&quot;mykit-entry-node&quot; class=&quot;form-select&quot;&gt;&lt;/select&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+
+      &lt;label class=&quot;form-label&quot; for=&quot;mykit-entry-tags&quot;&gt;
+        Tags
+        &lt;input id=&quot;mykit-entry-tags&quot; class=&quot;form-control&quot; type=&quot;text&quot; placeholder=&quot;Separate tags with commas&quot;&gt;
+      &lt;/label&gt;
+
+      &lt;div class=&quot;viz-controls workspace-actions&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;btn btn-primary&quot; id=&quot;mykit-save-entry&quot;&gt;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Save entry&lt;/button&gt;
+        &lt;button type=&quot;button&quot; class=&quot;btn&quot; id=&quot;mykit-clear-entry&quot;&gt;Clear&lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;workspace-browser&quot;&gt;
+        &lt;label class=&quot;form-label&quot; for=&quot;mykit-entry-search&quot;&gt;
+          Find saved information
+          &lt;input id=&quot;mykit-entry-search&quot; class=&quot;form-control&quot; type=&quot;search&quot; placeholder=&quot;Search notes, tags, and sections&quot;&gt;
+        &lt;/label&gt;
+        &lt;label class=&quot;form-check&quot;&gt;
+          &lt;input class=&quot;form-check-input&quot; id=&quot;mykit-current-only&quot; type=&quot;checkbox&quot;&gt;
+          &lt;span class=&quot;form-check-label&quot;&gt;Only this section&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+
+      &lt;div id=&quot;mykit-entry-list&quot; class=&quot;entry-list&quot; aria-live=&quot;polite&quot;&gt;&lt;/div&gt;
+
+      &lt;div class=&quot;viz-controls workspace-data-actions&quot; aria-label=&quot;Knowledge workspace data&quot;&gt;
+        &lt;button type=&quot;button&quot; class=&quot;btn btn-ghost&quot; id=&quot;mykit-export-data&quot;&gt;&lt;i data-lucide=&quot;download&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Export backup&lt;/button&gt;
+        &lt;label class=&quot;btn btn-ghost import-label&quot; for=&quot;mykit-import-data&quot;&gt;&lt;i data-lucide=&quot;upload&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Import backup&lt;/label&gt;
+        &lt;input id=&quot;mykit-import-data&quot; class=&quot;sr-only&quot; type=&quot;file&quot; accept=&quot;application/json,.json&quot;&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+  &lt;/aside&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style&gt;
+  #mykit-interactive-canvas {
+    width: 100%;
+    color: var(--foreground);
+  }
+  #mykit-interactive-canvas .canvas-topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  #mykit-interactive-canvas .canvas-controls {
+    justify-content: space-between;
+    align-items: end;
+    margin: 0;
+  }
+  #mykit-interactive-canvas .canvas-controls .form-label {
+    width: min(320px, 100%);
+    margin: 0;
+  }
+  #mykit-interactive-canvas .canvas-controls output {
+    margin-inline-start: 6px;
+  }
+  #mykit-interactive-canvas .canvas-controls &gt; span:not([id]) {
+    display: none;
+  }
+  #mykit-interactive-canvas .annotation-toolbar {
+    margin: 0;
+  }
+  #mykit-interactive-canvas .canvas-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(290px, 340px);
+    align-items: stretch;
+    gap: 12px;
+  }
+  #mykit-interactive-canvas .canvas-field {
+    position: relative;
+    height: clamp(560px, 48vw, 760px);
+    padding: 0;
+    overflow: hidden;
+    touch-action: none;
+  }
+  #mykit-interactive-canvas .canvas-world,
+  #mykit-interactive-canvas .canvas-edges,
+  #mykit-interactive-canvas .canvas-annotations,
+  #mykit-interactive-canvas .canvas-notes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #mykit-interactive-canvas .canvas-edges {
+    pointer-events: none;
+  }
+  #mykit-interactive-canvas .canvas-world {
+    z-index: 1;
+  }
+  #mykit-interactive-canvas .canvas-annotations {
+    z-index: 2;
+    pointer-events: none;
+  }
+  #mykit-interactive-canvas .canvas-notes {
+    z-index: 3;
+    pointer-events: none;
+  }
+  #mykit-interactive-canvas .canvas-field.is-drawing .canvas-annotations {
+    pointer-events: auto;
+    cursor: crosshair;
+  }
+  #mykit-interactive-canvas .canvas-field.is-note-mode .canvas-world {
+    pointer-events: none;
+  }
+  #mykit-interactive-canvas .annotation-stroke {
+    fill: none;
+    stroke: var(--viz-series-5);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+  }
+  #mykit-interactive-canvas .annotation-note {
+    position: absolute;
+    width: 150px;
+    min-height: 76px;
+    max-width: 42%;
+    z-index: 1;
+    transform: translate(-50%, -50%);
+    resize: none;
+    pointer-events: auto;
+  }
+  #mykit-interactive-canvas .canvas-edge {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.5;
+    vector-effect: non-scaling-stroke;
+    transition: opacity 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+  }
+  #mykit-interactive-canvas .canvas-edge.is-active {
+    stroke: var(--viz-series-1);
+    stroke-width: 2.5;
+  }
+  #mykit-interactive-canvas .canvas-edge.is-dimmed {
+    opacity: 0.18;
+  }
+  #mykit-interactive-canvas .canvas-node {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 1;
+    gap: 7px;
+    max-inline-size: 148px;
+    text-align: left;
+    cursor: grab;
+    transform: translate(-50%, -50%);
+    transition: opacity 160ms ease;
+    user-select: none;
+  }
+  #mykit-interactive-canvas .canvas-node:active {
+    cursor: grabbing;
+  }
+  #mykit-interactive-canvas .canvas-node.is-dimmed {
+    opacity: 0.5;
+  }
+  #mykit-interactive-canvas .node-k {
+    background: color-mix(in srgb, var(--viz-series-1) 13%, var(--card));
+  }
+  #mykit-interactive-canvas .node-i {
+    background: color-mix(in srgb, var(--viz-series-2) 13%, var(--card));
+  }
+  #mykit-interactive-canvas .node-t {
+    background: color-mix(in srgb, var(--viz-series-3) 13%, var(--card));
+  }
+  #mykit-interactive-canvas .node-shared {
+    background: color-mix(in srgb, var(--viz-series-4) 13%, var(--card));
+  }
+  #mykit-interactive-canvas .node-letter {
+    font-weight: 500;
+  }
+  #mykit-interactive-canvas .node-section {
+    max-inline-size: 170px;
+  }
+  #mykit-interactive-canvas .node-section strong,
+  #mykit-interactive-canvas .node-section small {
+    display: block;
+  }
+  #mykit-interactive-canvas .node-section small {
+    color: var(--muted-foreground);
+    margin-top: 2px;
+  }
+  #mykit-interactive-canvas .canvas-detail {
+    display: grid;
+    align-content: start;
+    gap: 18px;
+    margin: 0;
+  }
+  #mykit-interactive-canvas .detail-heading h3 {
+    margin: 10px 0 6px;
+  }
+  #mykit-interactive-canvas .detail-heading p,
+  #mykit-interactive-canvas .detail-section p {
+    margin: 0;
+  }
+  #mykit-interactive-canvas .detail-heading p,
+  #mykit-interactive-canvas .detail-section p {
+    color: var(--card-foreground);
+  }
+  #mykit-interactive-canvas .detail-section {
+    display: grid;
+    gap: 6px;
+  }
+  #mykit-interactive-canvas .detail-section small,
+  #mykit-interactive-canvas .detail-flow small {
+    display: block;
+    margin-bottom: 6px;
+  }
+  #mykit-interactive-canvas .detail-flow {
+    display: grid;
+    gap: 16px;
+  }
+  #mykit-interactive-canvas .detail-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #mykit-interactive-canvas .knowledge-workspace {
+    display: grid;
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  #mykit-interactive-canvas .workspace-heading,
+  #mykit-interactive-canvas .entry-heading,
+  #mykit-interactive-canvas .entry-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  #mykit-interactive-canvas .workspace-heading h3 {
+    margin: 8px 0 0;
+  }
+  #mykit-interactive-canvas .workspace-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 10px;
+  }
+  #mykit-interactive-canvas .workspace-actions,
+  #mykit-interactive-canvas .workspace-data-actions {
+    margin: 0;
+  }
+  #mykit-interactive-canvas .workspace-browser {
+    display: grid;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  #mykit-interactive-canvas .entry-list {
+    display: grid;
+    gap: 10px;
+  }
+  #mykit-interactive-canvas .knowledge-entry {
+    display: grid;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  #mykit-interactive-canvas .knowledge-entry:last-child {
+    border-bottom: 0;
+  }
+  #mykit-interactive-canvas .knowledge-entry p {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  #mykit-interactive-canvas .entry-meta {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  #mykit-interactive-canvas .entry-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  #mykit-interactive-canvas .entry-empty {
+    margin: 0;
+    color: var(--muted-foreground);
+  }
+  #mykit-interactive-canvas .import-label {
+    cursor: pointer;
+  }
+  @media (max-width: 980px) {
+    #mykit-interactive-canvas .canvas-topbar,
+    #mykit-interactive-canvas .canvas-layout {
+      grid-template-columns: 1fr;
+    }
+    #mykit-interactive-canvas .canvas-detail {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    #mykit-interactive-canvas .detail-heading,
+    #mykit-interactive-canvas .detail-flow,
+    #mykit-interactive-canvas .knowledge-workspace {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 520px) {
+    #mykit-interactive-canvas .canvas-controls {
+      align-items: stretch;
+      flex-direction: column;
+    }
+    #mykit-interactive-canvas .canvas-controls .form-label {
+      width: 100%;
+    }
+    #mykit-interactive-canvas .annotation-toolbar {
+      align-items: stretch;
+    }
+    #mykit-interactive-canvas .annotation-toolbar .btn {
+      flex: 1 1 44%;
+      justify-content: center;
+    }
+    #mykit-interactive-canvas .canvas-field {
+      height: clamp(920px, 260vw, 1120px);
+    }
+    #mykit-interactive-canvas .canvas-detail {
+      grid-template-columns: 1fr;
+    }
+    #mykit-interactive-canvas .detail-heading,
+    #mykit-interactive-canvas .detail-flow,
+    #mykit-interactive-canvas .knowledge-workspace {
+      grid-column: 1;
+    }
+    #mykit-interactive-canvas .workspace-fields {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #mykit-interactive-canvas .canvas-edge,
+    #mykit-interactive-canvas .canvas-node {
+      transition: none;
+    }
+  }
+&lt;/style&gt;
+
+&lt;script&gt;
+  (() =&gt; {
+    const root = document.getElementById(&#x27;mykit-interactive-canvas&#x27;);
+    const field = root.querySelector(&#x27;.canvas-field&#x27;);
+    const svg = root.querySelector(&#x27;.canvas-edges&#x27;);
+    const annotationSvg = root.querySelector(&#x27;.canvas-annotations&#x27;);
+    const notesLayer = root.querySelector(&#x27;.canvas-notes&#x27;);
+    const nodes = Array.from(root.querySelectorAll(&#x27;.canvas-node&#x27;));
+    const zoom = document.getElementById(&#x27;mykit-canvas-zoom&#x27;);
+    const zoomValue = document.getElementById(&#x27;mykit-canvas-zoom-value&#x27;);
+    const instruction = document.getElementById(&#x27;mykit-canvas-instruction&#x27;);
+    const toolButtons = Array.from(root.querySelectorAll(&#x27;[data-canvas-tool]&#x27;));
+    const undoButton = document.getElementById(&#x27;mykit-canvas-undo&#x27;);
+    const groupLabel = document.getElementById(&#x27;mykit-canvas-group&#x27;);
+    const selection = document.getElementById(&#x27;mykit-canvas-selection&#x27;);
+    const description = document.getElementById(&#x27;mykit-canvas-description&#x27;);
+    const purpose = document.getElementById(&#x27;mykit-canvas-purpose&#x27;);
+    const includes = document.getElementById(&#x27;mykit-canvas-includes&#x27;);
+    const connections = document.getElementById(&#x27;mykit-canvas-connections&#x27;);
+    const inputs = document.getElementById(&#x27;mykit-canvas-inputs&#x27;);
+    const outputs = document.getElementById(&#x27;mykit-canvas-outputs&#x27;);
+    const quickEntry = document.getElementById(&#x27;mykit-quick-entry&#x27;);
+    const entryType = document.getElementById(&#x27;mykit-entry-type&#x27;);
+    const entryNode = document.getElementById(&#x27;mykit-entry-node&#x27;);
+    const entryTags = document.getElementById(&#x27;mykit-entry-tags&#x27;);
+    const saveEntryButton = document.getElementById(&#x27;mykit-save-entry&#x27;);
+    const clearEntryButton = document.getElementById(&#x27;mykit-clear-entry&#x27;);
+    const entrySearch = document.getElementById(&#x27;mykit-entry-search&#x27;);
+    const currentOnly = document.getElementById(&#x27;mykit-current-only&#x27;);
+    const entryList = document.getElementById(&#x27;mykit-entry-list&#x27;);
+    const entryCount = document.getElementById(&#x27;mykit-entry-count&#x27;);
+    const saveStatus = document.getElementById(&#x27;mykit-save-status&#x27;);
+    const exportButton = document.getElementById(&#x27;mykit-export-data&#x27;);
+    const importInput = document.getElementById(&#x27;mykit-import-data&#x27;);
+
+    const labels = {
+      mykit: &#x27;myKIT&#x27;, kidney: &#x27;myKidney&#x27;, insights: &#x27;myInsights&#x27;, tools: &#x27;myTools&#x27;,
+      overview: &#x27;Kidney overview&#x27;, treatments: &#x27;Treatments&#x27;, access: &#x27;Vascular access&#x27;,
+      transplant: &#x27;Transplant path&#x27;, reports: &#x27;Health reports&#x27;, labs: &#x27;Lab results&#x27;,
+      &#x27;deep-dives&#x27;: &#x27;Deep dives&#x27;, patterns: &#x27;Trends &amp; patterns&#x27;, medications: &#x27;Medications&#x27;,
+      food: &#x27;Food &amp; nutrition&#x27;, fluid: &#x27;Fluid tracker&#x27;, appointments: &#x27;Appointments&#x27;,
+      education: &#x27;Education&#x27;, messages: &#x27;Messages &amp; support&#x27;, capture: &#x27;Capture &amp; upload&#x27;,
+      adherence: &#x27;Treatment adherence&#x27;
+    };
+
+    const descriptions = {
+      mykit: &#x27;Connects myKidney, myInsights, and myTools into one coordinated kidney health kit.&#x27;,
+      kidney: &#x27;Holds the care journey: current health, treatments, vascular access, and transplant progress.&#x27;,
+      insights: &#x27;Turns daily health data into reports, explanations, trends, and connected patterns.&#x27;,
+      tools: &#x27;Captures the daily actions that update the patient record across myKIT.&#x27;,
+      overview: &#x27;Summarizes labs, treatments, medications, fluids, appointments, and current priorities.&#x27;,
+      treatments: &#x27;Feeds treatment patterns, vascular-access care, and adherence evidence.&#x27;,
+      access: &#x27;Supports safe dialysis and contributes access-care checks to the treatment record.&#x27;,
+      transplant: &#x27;Combines prerequisites, uploaded records, appointments, and adherence evidence for listing readiness.&#x27;,
+      reports: &#x27;Combines labs, treatments, nutrition, fluids, medications, access, and adherence.&#x27;,
+      labs: &#x27;Updates reports and can be transcribed from uploaded lab documents or photos.&#x27;,
+      &#x27;deep-dives&#x27;: &#x27;Explains why a health change matters and which connected data supports it.&#x27;,
+      patterns: &#x27;Shows relationships among treatments, fluids, medications, nutrition, labs, and access checks.&#x27;,
+      medications: &#x27;Dose completion contributes to health insights and transplant adherence evidence.&#x27;,
+      food: &#x27;Nutrition logs support lab interpretation, reports, and kidney-health trends.&#x27;,
+      fluid: &#x27;Daily fluid tracking informs treatment patterns and adherence readiness.&#x27;,
+      appointments: &#x27;Care attendance supports the treatment record and transplant prerequisites.&#x27;,
+      education: &#x27;Explains treatment, nutrition, vascular access, and transplant requirements.&#x27;,
+      messages: &#x27;Connects patients with the kidney center, dietitian, support team, and transplant coordinator.&#x27;,
+      capture: &#x27;Routes photos and documents into medications, labs, food logs, and transplant prerequisites after review.&#x27;,
+      adherence: &#x27;Combines dialysis attendance, medication doses, appointments, and fluid-goal days into listing-readiness evidence.&#x27;
+    };
+
+    const details = {
+      mykit: {
+        group: &#x27;myKIT system&#x27;,
+        purpose: &#x27;Coordinate the complete kidney-care experience&#x27;,
+        includes: &#x27;Three connected spaces for the care journey, health understanding, and daily action.&#x27;,
+        inputs: [&#x27;Daily actions&#x27;, &#x27;Clinical records&#x27;, &#x27;Care-team updates&#x27;],
+        outputs: [&#x27;Personal priorities&#x27;, &#x27;Shared health picture&#x27;, &#x27;Coordinated next steps&#x27;]
+      },
+      kidney: {
+        group: &#x27;K · myKidney&#x27;,
+        purpose: &#x27;Follow the patient’s care journey&#x27;,
+        includes: &#x27;Kidney overview, treatments, vascular access, and transplant readiness.&#x27;,
+        inputs: [&#x27;Labs&#x27;, &#x27;Treatment records&#x27;, &#x27;Adherence&#x27;, &#x27;Appointments&#x27;],
+        outputs: [&#x27;Current status&#x27;, &#x27;Care milestones&#x27;, &#x27;Next best actions&#x27;]
+      },
+      insights: {
+        group: &#x27;I · myInsights&#x27;,
+        purpose: &#x27;Explain what is happening and why it matters&#x27;,
+        includes: &#x27;Health reports, lab interpretation, deep dives, and connected trends.&#x27;,
+        inputs: [&#x27;Labs&#x27;, &#x27;Treatments&#x27;, &#x27;Nutrition&#x27;, &#x27;Fluids&#x27;, &#x27;Medications&#x27;],
+        outputs: [&#x27;Plain-language meaning&#x27;, &#x27;Patterns&#x27;, &#x27;Questions for care team&#x27;]
+      },
+      tools: {
+        group: &#x27;T · myTools&#x27;,
+        purpose: &#x27;Help patients take useful action every day&#x27;,
+        includes: &#x27;Medication, food, fluid, appointment, education, messaging, and capture tools.&#x27;,
+        inputs: [&#x27;Patient entries&#x27;, &#x27;Photos&#x27;, &#x27;Documents&#x27;, &#x27;Reminders&#x27;],
+        outputs: [&#x27;Structured updates&#x27;, &#x27;Adherence evidence&#x27;, &#x27;Care-team communication&#x27;]
+      },
+      overview: {
+        group: &#x27;myKidney&#x27;,
+        purpose: &#x27;See the current kidney-health picture at a glance&#x27;,
+        includes: &#x27;Key labs, treatment status, medications, fluid progress, and immediate priorities.&#x27;,
+        inputs: [&#x27;Lab results&#x27;, &#x27;Treatments&#x27;, &#x27;Medications&#x27;, &#x27;Fluid&#x27;],
+        outputs: [&#x27;Health summary&#x27;, &#x27;Priority alerts&#x27;, &#x27;Recommended actions&#x27;]
+      },
+      treatments: {
+        group: &#x27;myKidney&#x27;,
+        purpose: &#x27;Prepare for and track every treatment&#x27;,
+        includes: &#x27;Schedule, check-in, session history, symptoms, weights, and treatment summaries.&#x27;,
+        inputs: [&#x27;Treatment center&#x27;, &#x27;Weights&#x27;, &#x27;Symptoms&#x27;, &#x27;Access checks&#x27;],
+        outputs: [&#x27;Treatment record&#x27;, &#x27;Health patterns&#x27;, &#x27;Adherence evidence&#x27;]
+      },
+      access: {
+        group: &#x27;myKidney&#x27;,
+        purpose: &#x27;Protect and monitor vascular access&#x27;,
+        includes: &#x27;Daily checks, access ID, care timeline, surveillance, and concern reporting.&#x27;,
+        inputs: [&#x27;Patient checks&#x27;, &#x27;Dialysis team&#x27;, &#x27;Flow surveillance&#x27;],
+        outputs: [&#x27;Safety alerts&#x27;, &#x27;Access history&#x27;, &#x27;Treatment readiness&#x27;]
+      },
+      transplant: {
+        group: &#x27;myKidney&#x27;,
+        purpose: &#x27;Track progress toward transplant listing&#x27;,
+        includes: &#x27;Prerequisites, documents, evaluations, coordinator contact, and waitlist milestones.&#x27;,
+        inputs: [&#x27;Clearances&#x27;, &#x27;Appointments&#x27;, &#x27;Uploaded records&#x27;, &#x27;Adherence&#x27;],
+        outputs: [&#x27;Readiness status&#x27;, &#x27;Missing requirements&#x27;, &#x27;Next best action&#x27;]
+      },
+      reports: {
+        group: &#x27;myInsights&#x27;,
+        purpose: &#x27;Bring the full health story into one report&#x27;,
+        includes: &#x27;Labs, blood pressure, weight, symptoms, treatments, access, and adherence.&#x27;,
+        inputs: [&#x27;Kidney data&#x27;, &#x27;Daily tools&#x27;, &#x27;Clinical records&#x27;],
+        outputs: [&#x27;30-day summary&#x27;, &#x27;Shareable report&#x27;, &#x27;Discussion prompts&#x27;]
+      },
+      labs: {
+        group: &#x27;myInsights&#x27;,
+        purpose: &#x27;Understand results, targets, and changes over time&#x27;,
+        includes: &#x27;Current values, prior values, reference ranges, trends, and care-team context.&#x27;,
+        inputs: [&#x27;Lab feeds&#x27;, &#x27;Uploaded reports&#x27;, &#x27;Camera transcription&#x27;],
+        outputs: [&#x27;Trend evidence&#x27;, &#x27;Health reports&#x27;, &#x27;Explained results&#x27;]
+      },
+      &#x27;deep-dives&#x27;: {
+        group: &#x27;myInsights&#x27;,
+        purpose: &#x27;Explore why a change may be happening&#x27;,
+        includes: &#x27;Focused explanations connecting labs, treatments, nutrition, fluid, and medication behavior.&#x27;,
+        inputs: [&#x27;Trend changes&#x27;, &#x27;Patient goals&#x27;, &#x27;Connected records&#x27;],
+        outputs: [&#x27;Possible drivers&#x27;, &#x27;Learning pathway&#x27;, &#x27;Care-team questions&#x27;]
+      },
+      patterns: {
+        group: &#x27;myInsights&#x27;,
+        purpose: &#x27;Reveal relationships across the care journey&#x27;,
+        includes: &#x27;Treatment-to-fluid, medication-to-lab, nutrition-to-lab, and access-to-treatment patterns.&#x27;,
+        inputs: [&#x27;Time-series data&#x27;, &#x27;Daily logs&#x27;, &#x27;Treatment history&#x27;],
+        outputs: [&#x27;Connected trends&#x27;, &#x27;Change signals&#x27;, &#x27;Actionable insight&#x27;]
+      },
+      medications: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Keep the medication plan accurate and on schedule&#x27;,
+        includes: &#x27;Medication list, dose completion, reminders, card scanning, and reviewed updates.&#x27;,
+        inputs: [&#x27;Prescriptions&#x27;, &#x27;Medication card photos&#x27;, &#x27;Patient confirmation&#x27;],
+        outputs: [&#x27;Dose history&#x27;, &#x27;Updated medication list&#x27;, &#x27;Adherence evidence&#x27;]
+      },
+      food: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Turn food choices into kidney-relevant guidance&#x27;,
+        includes: &#x27;Food logging, meal photos, nutrition transcription, meal plans, and dietitian support.&#x27;,
+        inputs: [&#x27;Meals&#x27;, &#x27;Food photos&#x27;, &#x27;Nutrition labels&#x27;],
+        outputs: [&#x27;Nutrition log&#x27;, &#x27;Lab context&#x27;, &#x27;Dietitian conversation&#x27;]
+      },
+      fluid: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Track intake against the daily fluid goal&#x27;,
+        includes: &#x27;Quick logging, daily goal, remaining intake, history, and reminders.&#x27;,
+        inputs: [&#x27;Drinks&#x27;, &#x27;Daily goal&#x27;, &#x27;Treatment guidance&#x27;],
+        outputs: [&#x27;Fluid history&#x27;, &#x27;Treatment patterns&#x27;, &#x27;Adherence evidence&#x27;]
+      },
+      appointments: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Organize care visits and prerequisites&#x27;,
+        includes: &#x27;Upcoming visits, reminders, directions, questions, and appointment requests.&#x27;,
+        inputs: [&#x27;Care team&#x27;, &#x27;Transplant center&#x27;, &#x27;Patient requests&#x27;],
+        outputs: [&#x27;Attendance record&#x27;, &#x27;Care timeline&#x27;, &#x27;Prerequisite progress&#x27;]
+      },
+      education: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Deliver trusted guidance at the right moment&#x27;,
+        includes: &#x27;Short lessons on treatment, nutrition, access care, transplant, and self-management.&#x27;,
+        inputs: [&#x27;Care plan&#x27;, &#x27;Current priorities&#x27;, &#x27;Patient interests&#x27;],
+        outputs: [&#x27;Prepared patients&#x27;, &#x27;Safer actions&#x27;, &#x27;Better care conversations&#x27;]
+      },
+      messages: {
+        group: &#x27;myTools&#x27;,
+        purpose: &#x27;Connect the patient with the right care-team member&#x27;,
+        includes: &#x27;Kidney center, dietitian, transplant coordinator, support, and attachment sharing.&#x27;,
+        inputs: [&#x27;Patient questions&#x27;, &#x27;Photos&#x27;, &#x27;Documents&#x27;, &#x27;Care alerts&#x27;],
+        outputs: [&#x27;Care coordination&#x27;, &#x27;Clarified next steps&#x27;, &#x27;Support history&#x27;]
+      },
+      capture: {
+        group: &#x27;Shared capability&#x27;,
+        purpose: &#x27;Turn photos and documents into reviewed structured data&#x27;,
+        includes: &#x27;Camera capture, file upload, transcription preview, category routing, and confirmation.&#x27;,
+        inputs: [&#x27;Medication cards&#x27;, &#x27;Lab reports&#x27;, &#x27;Food photos&#x27;, &#x27;Clearance documents&#x27;],
+        outputs: [&#x27;Medication updates&#x27;, &#x27;Lab entries&#x27;, &#x27;Food logs&#x27;, &#x27;Transplant records&#x27;]
+      },
+      adherence: {
+        group: &#x27;Shared capability&#x27;,
+        purpose: &#x27;Show consistency across the treatment plan&#x27;,
+        includes: &#x27;Dialysis attendance, medication completion, appointment attendance, and fluid-goal days.&#x27;,
+        inputs: [&#x27;Treatments&#x27;, &#x27;Medications&#x27;, &#x27;Appointments&#x27;, &#x27;Fluid tracking&#x27;],
+        outputs: [&#x27;Readiness evidence&#x27;, &#x27;Care-team review&#x27;, &#x27;Transplant context&#x27;]
+      }
+    };
+
+    const desktop = {
+      mykit: [50, 8],
+      kidney: [17, 22], overview: [7, 39], treatments: [23, 39], access: [7, 54], transplant: [23, 54],
+      insights: [50, 22], reports: [42, 39], labs: [58, 39], &#x27;deep-dives&#x27;: [42, 54], patterns: [58, 54],
+      tools: [83, 22], medications: [76, 39], food: [92, 39], fluid: [76, 54], appointments: [92, 54], education: [76, 69], messages: [92, 69],
+      capture: [35, 84], adherence: [65, 84]
+    };
+
+    const mobile = {
+      mykit: [50, 4],
+      kidney: [50, 12], overview: [25, 20], treatments: [75, 20], access: [25, 28], transplant: [75, 28],
+      insights: [50, 38], reports: [25, 46], labs: [75, 46], &#x27;deep-dives&#x27;: [25, 54], patterns: [75, 54],
+      tools: [50, 64], medications: [25, 72], food: [75, 72], fluid: [25, 80], appointments: [75, 80], education: [25, 88], messages: [75, 88],
+      capture: [25, 97], adherence: [75, 97]
+    };
+
+    const edges = [
+      [&#x27;mykit&#x27;, &#x27;kidney&#x27;], [&#x27;mykit&#x27;, &#x27;insights&#x27;], [&#x27;mykit&#x27;, &#x27;tools&#x27;],
+      [&#x27;kidney&#x27;, &#x27;overview&#x27;], [&#x27;kidney&#x27;, &#x27;treatments&#x27;], [&#x27;kidney&#x27;, &#x27;access&#x27;], [&#x27;kidney&#x27;, &#x27;transplant&#x27;],
+      [&#x27;insights&#x27;, &#x27;reports&#x27;], [&#x27;insights&#x27;, &#x27;labs&#x27;], [&#x27;insights&#x27;, &#x27;deep-dives&#x27;], [&#x27;insights&#x27;, &#x27;patterns&#x27;],
+      [&#x27;tools&#x27;, &#x27;medications&#x27;], [&#x27;tools&#x27;, &#x27;food&#x27;], [&#x27;tools&#x27;, &#x27;fluid&#x27;], [&#x27;tools&#x27;, &#x27;appointments&#x27;], [&#x27;tools&#x27;, &#x27;education&#x27;], [&#x27;tools&#x27;, &#x27;messages&#x27;],
+      [&#x27;access&#x27;, &#x27;treatments&#x27;], [&#x27;treatments&#x27;, &#x27;patterns&#x27;], [&#x27;labs&#x27;, &#x27;reports&#x27;], [&#x27;food&#x27;, &#x27;labs&#x27;],
+      [&#x27;medications&#x27;, &#x27;adherence&#x27;], [&#x27;treatments&#x27;, &#x27;adherence&#x27;], [&#x27;fluid&#x27;, &#x27;adherence&#x27;], [&#x27;appointments&#x27;, &#x27;adherence&#x27;],
+      [&#x27;adherence&#x27;, &#x27;transplant&#x27;], [&#x27;appointments&#x27;, &#x27;transplant&#x27;], [&#x27;messages&#x27;, &#x27;transplant&#x27;],
+      [&#x27;capture&#x27;, &#x27;medications&#x27;], [&#x27;capture&#x27;, &#x27;labs&#x27;], [&#x27;capture&#x27;, &#x27;food&#x27;], [&#x27;capture&#x27;, &#x27;transplant&#x27;],
+      [&#x27;reports&#x27;, &#x27;overview&#x27;], [&#x27;education&#x27;, &#x27;treatments&#x27;]
+    ];
+
+    let positions = {};
+    let mobileMode = null;
+    let selected = &#x27;mykit&#x27;;
+    let mode = &#x27;move&#x27;;
+    let drawing = null;
+    const annotationActions = [];
+    const storageKey = &#x27;mykit-connected-canvas-v3&#x27;;
+    let editingId = null;
+    let saveStatusTimer = null;
+    let workspaceState = {
+      entries: [],
+      layouts: { desktop: null, mobile: null },
+      strokes: [],
+      canvasNotes: [],
+      zoom: 92,
+      selected: &#x27;mykit&#x27;
+    };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || &#x27;null&#x27;);
+      if (saved &amp;&amp; typeof saved === &#x27;object&#x27;) {
+        workspaceState = {
+          ...workspaceState,
+          ...saved,
+          entries: Array.isArray(saved.entries) ? saved.entries : [],
+          layouts: saved.layouts &amp;&amp; typeof saved.layouts === &#x27;object&#x27; ? saved.layouts : workspaceState.layouts,
+          strokes: Array.isArray(saved.strokes) ? saved.strokes : [],
+          canvasNotes: Array.isArray(saved.canvasNotes) ? saved.canvasNotes : []
+        };
+      }
+    } catch (error) {
+      saveStatus.textContent = &#x27;Local backup could not be read&#x27;;
+    }
+
+    const nodeFor = (id) =&gt; root.querySelector(`[data-node=&quot;${id}&quot;]`);
+
+    function setLayout(force = false) {
+      const nextMobile = field.clientWidth &lt;= 520;
+      if (!force &amp;&amp; nextMobile === mobileMode) return;
+      mobileMode = nextMobile;
+      const source = nextMobile ? mobile : desktop;
+      const savedLayout = workspaceState.layouts[nextMobile ? &#x27;mobile&#x27; : &#x27;desktop&#x27;];
+      positions = Object.fromEntries(Object.entries(source).map(([id, value]) =&gt; [
+        id,
+        savedLayout &amp;&amp; Array.isArray(savedLayout[id]) ? [...savedLayout[id]] : [...value]
+      ]));
+      render();
+    }
+
+    function screenPosition(id) {
+      const [x, y] = positions[id];
+      const scale = Number(zoom.value) / 100;
+      return [
+        Math.max(4, Math.min(96, 50 + (x - 50) * scale)),
+        Math.max(3, Math.min(97, 50 + (y - 50) * scale))
+      ];
+    }
+
+    function drawEdges() {
+      const box = field.getBoundingClientRect();
+      svg.setAttribute(&#x27;viewBox&#x27;, `0 0 ${box.width} ${box.height}`);
+      svg.replaceChildren();
+      edges.forEach(([from, to]) =&gt; {
+        const a = nodeFor(from);
+        const b = nodeFor(to);
+        if (!a || !b) return;
+        const ar = a.getBoundingClientRect();
+        const br = b.getBoundingClientRect();
+        const x1 = ar.left + ar.width / 2 - box.left;
+        const y1 = ar.top + ar.height / 2 - box.top;
+        const x2 = br.left + br.width / 2 - box.left;
+        const y2 = br.top + br.height / 2 - box.top;
+        const curve = Math.max(18, Math.abs(y2 - y1) * 0.38);
+        const path = document.createElementNS(&#x27;http://www.w3.org/2000/svg&#x27;, &#x27;path&#x27;);
+        path.setAttribute(&#x27;d&#x27;, `M ${x1} ${y1} C ${x1} ${y1 + curve}, ${x2} ${y2 - curve}, ${x2} ${y2}`);
+        path.setAttribute(&#x27;class&#x27;, &#x27;canvas-edge&#x27;);
+        path.dataset.from = from;
+        path.dataset.to = to;
+        svg.appendChild(path);
+      });
+      updateSelectionStyles();
+    }
+
+    function render() {
+      nodes.forEach((node) =&gt; {
+        const [x, y] = screenPosition(node.dataset.node);
+        node.style.left = `${x}%`;
+        node.style.top = `${y}%`;
+      });
+      zoomValue.value = `${zoom.value}%`;
+      requestAnimationFrame(drawEdges);
+    }
+
+    function updateSelectionStyles() {
+      const connected = new Set([selected]);
+      const showAll = selected === &#x27;mykit&#x27;;
+      edges.forEach(([from, to]) =&gt; {
+        if (from === selected) connected.add(to);
+        if (to === selected) connected.add(from);
+      });
+      nodes.forEach((node) =&gt; {
+        const active = node.dataset.node === selected;
+        node.setAttribute(&#x27;aria-pressed&#x27;, String(active));
+        node.classList.toggle(&#x27;is-dimmed&#x27;, !showAll &amp;&amp; !connected.has(node.dataset.node));
+      });
+      svg.querySelectorAll(&#x27;.canvas-edge&#x27;).forEach((edge) =&gt; {
+        const active = edge.dataset.from === selected || edge.dataset.to === selected;
+        edge.classList.toggle(&#x27;is-active&#x27;, active);
+        edge.classList.toggle(&#x27;is-dimmed&#x27;, !showAll &amp;&amp; !active);
+      });
+    }
+
+    function connectedLabels(id) {
+      const related = [];
+      edges.forEach(([from, to]) =&gt; {
+        if (from === id) related.push(labels[to]);
+        if (to === id) related.push(labels[from]);
+      });
+      return [...new Set(related)];
+    }
+
+    function renderChips(container, items) {
+      container.replaceChildren();
+      items.forEach((item) =&gt; {
+        const chip = document.createElement(&#x27;span&#x27;);
+        chip.className = &#x27;viz-badge&#x27;;
+        chip.textContent = item;
+        container.appendChild(chip);
+      });
+    }
+
+    function selectNode(id) {
+      selected = id;
+      const detail = details[id];
+      groupLabel.textContent = detail.group;
+      selection.textContent = labels[id];
+      description.textContent = descriptions[id];
+      purpose.textContent = detail.purpose;
+      includes.textContent = detail.includes;
+      renderChips(connections, connectedLabels(id));
+      renderChips(inputs, detail.inputs);
+      renderChips(outputs, detail.outputs);
+      updateSelectionStyles();
+      if (!quickEntry.value.trim()) entryNode.value = id;
+      renderEntries();
+      scheduleSave();
+    }
+
+    function collectWorkspaceState() {
+      workspaceState.layouts[mobileMode ? &#x27;mobile&#x27; : &#x27;desktop&#x27;] = Object.fromEntries(
+        Object.entries(positions).map(([id, value]) =&gt; [id, [...value]])
+      );
+      workspaceState.strokes = Array.from(annotationSvg.querySelectorAll(&#x27;.annotation-stroke&#x27;))
+        .map((path) =&gt; path.getAttribute(&#x27;d&#x27;))
+        .filter(Boolean);
+      workspaceState.canvasNotes = Array.from(notesLayer.querySelectorAll(&#x27;.annotation-note&#x27;)).map((note) =&gt; ({
+        left: note.style.left,
+        top: note.style.top,
+        text: note.value
+      }));
+      workspaceState.zoom = Number(zoom.value);
+      workspaceState.selected = selected;
+    }
+
+    function saveWorkspace() {
+      collectWorkspaceState();
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(workspaceState));
+        saveStatus.textContent = &#x27;Saved now&#x27;;
+        clearTimeout(saveStatusTimer);
+        saveStatusTimer = setTimeout(() =&gt; {
+          saveStatus.textContent = &#x27;Saved locally&#x27;;
+        }, 1400);
+      } catch (error) {
+        saveStatus.textContent = &#x27;Storage is full — export a backup&#x27;;
+      }
+    }
+
+    function scheduleSave() {
+      clearTimeout(scheduleSave.timer);
+      saveStatus.textContent = &#x27;Saving…&#x27;;
+      scheduleSave.timer = setTimeout(saveWorkspace, 180);
+    }
+
+    function clearComposer() {
+      editingId = null;
+      quickEntry.value = &#x27;&#x27;;
+      entryTags.value = &#x27;&#x27;;
+      entryType.value = &#x27;note&#x27;;
+      entryNode.value = selected;
+      saveEntryButton.innerHTML = &#x27;&lt;i data-lucide=&quot;plus&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Save entry&#x27;;
+      if (globalThis.lucide) lucide.createIcons({ attrs: { width: 16, height: 16 } });
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? &#x27;&#x27; : date.toLocaleString([], {
+        month: &#x27;short&#x27;, day: &#x27;numeric&#x27;, hour: &#x27;numeric&#x27;, minute: &#x27;2-digit&#x27;
+      });
+    }
+
+    function entryMatches(entry) {
+      const query = entrySearch.value.trim().toLowerCase();
+      if (currentOnly.checked &amp;&amp; entry.node !== selected) return false;
+      if (!query) return true;
+      return [
+        entry.text,
+        entry.type,
+        labels[entry.node] || entry.node,
+        ...(entry.tags || [])
+      ].join(&#x27; &#x27;).toLowerCase().includes(query);
+    }
+
+    function renderEntries() {
+      const filtered = workspaceState.entries.filter(entryMatches);
+      entryList.replaceChildren();
+      entryCount.textContent = `${workspaceState.entries.length} saved`;
+
+      if (!filtered.length) {
+        const empty = document.createElement(&#x27;p&#x27;);
+        empty.className = &#x27;entry-empty&#x27;;
+        empty.textContent = workspaceState.entries.length
+          ? &#x27;No saved information matches this view.&#x27;
+          : &#x27;Your saved ideas, questions, tasks, and records will appear here.&#x27;;
+        entryList.appendChild(empty);
+        return;
+      }
+
+      filtered
+        .slice()
+        .sort((a, b) =&gt; new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+        .forEach((entry) =&gt; {
+          const article = document.createElement(&#x27;article&#x27;);
+          article.className = &#x27;knowledge-entry&#x27;;
+          article.dataset.entryId = entry.id;
+
+          const heading = document.createElement(&#x27;div&#x27;);
+          heading.className = &#x27;entry-heading&#x27;;
+          const meta = document.createElement(&#x27;div&#x27;);
+          meta.className = &#x27;entry-meta&#x27;;
+          [entry.type, labels[entry.node] || &#x27;myKIT&#x27;, ...(entry.tags || [])].forEach((value) =&gt; {
+            const badge = document.createElement(&#x27;span&#x27;);
+            badge.className = &#x27;viz-badge&#x27;;
+            badge.textContent = value;
+            meta.appendChild(badge);
+          });
+          const time = document.createElement(&#x27;span&#x27;);
+          time.className = &#x27;text-small text-muted&#x27;;
+          time.textContent = formatDate(entry.updatedAt || entry.createdAt);
+          heading.append(meta, time);
+
+          const text = document.createElement(&#x27;p&#x27;);
+          text.textContent = entry.text;
+          if (entry.done) {
+            text.style.textDecoration = &#x27;line-through&#x27;;
+            text.style.opacity = &#x27;0.7&#x27;;
+          }
+
+          const actions = document.createElement(&#x27;div&#x27;);
+          actions.className = &#x27;entry-actions&#x27;;
+          const actionSpecs = [
+            [&#x27;open&#x27;, &#x27;Locate&#x27;, &#x27;locate-fixed&#x27;],
+            [&#x27;edit&#x27;, &#x27;Edit&#x27;, &#x27;square-pen&#x27;],
+            [&#x27;pin&#x27;, &#x27;Pin to map&#x27;, &#x27;pin&#x27;],
+            [&#x27;done&#x27;, entry.done ? &#x27;Reopen&#x27; : &#x27;Complete&#x27;, entry.done ? &#x27;rotate-ccw&#x27; : &#x27;check&#x27;],
+            [&#x27;delete&#x27;, &#x27;Delete&#x27;, &#x27;trash-2&#x27;]
+          ];
+          actionSpecs.forEach(([action, label, icon]) =&gt; {
+            const button = document.createElement(&#x27;button&#x27;);
+            button.type = &#x27;button&#x27;;
+            button.className = &#x27;btn btn-ghost&#x27;;
+            button.dataset.entryAction = action;
+            button.dataset.entryId = entry.id;
+            button.innerHTML = `&lt;i data-lucide=&quot;${icon}&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; ${label}`;
+            actions.appendChild(button);
+          });
+
+          article.append(heading, text, actions);
+          entryList.appendChild(article);
+        });
+      if (globalThis.lucide) lucide.createIcons({ attrs: { width: 16, height: 16 } });
+    }
+
+    function saveEntry() {
+      const text = quickEntry.value.trim();
+      if (!text) {
+        quickEntry.focus();
+        return;
+      }
+      const now = new Date().toISOString();
+      const tags = [...new Set(entryTags.value.split(&#x27;,&#x27;).map((tag) =&gt; tag.trim()).filter(Boolean))];
+      if (editingId) {
+        const existing = workspaceState.entries.find((entry) =&gt; entry.id === editingId);
+        if (existing) Object.assign(existing, {
+          text,
+          type: entryType.value,
+          node: entryNode.value,
+          tags,
+          updatedAt: now
+        });
+      } else {
+        workspaceState.entries.push({
+          id: globalThis.crypto?.randomUUID?.() || `entry-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          text,
+          type: entryType.value,
+          node: entryNode.value,
+          tags,
+          createdAt: now,
+          updatedAt: now,
+          done: false
+        });
+      }
+      clearComposer();
+      renderEntries();
+      saveWorkspace();
+    }
+
+    function appendCanvasNote(data, trackAction = false) {
+      const note = document.createElement(&#x27;textarea&#x27;);
+      note.className = &#x27;form-control annotation-note&#x27;;
+      note.setAttribute(&#x27;aria-label&#x27;, &#x27;Canvas annotation note&#x27;);
+      note.placeholder = &#x27;Type your note...&#x27;;
+      note.style.left = data.left || &#x27;50%&#x27;;
+      note.style.top = data.top || &#x27;50%&#x27;;
+      note.value = data.text || &#x27;&#x27;;
+      note.addEventListener(&#x27;input&#x27;, scheduleSave);
+      notesLayer.appendChild(note);
+      if (trackAction) {
+        annotationActions.push({ type: &#x27;note&#x27;, element: note });
+        updateUndo();
+      }
+      return note;
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      toolButtons.forEach((button) =&gt; button.setAttribute(&#x27;aria-pressed&#x27;, String(button.dataset.canvasTool === mode)));
+      field.classList.toggle(&#x27;is-drawing&#x27;, mode === &#x27;draw&#x27;);
+      field.classList.toggle(&#x27;is-note-mode&#x27;, mode === &#x27;note&#x27;);
+      instruction.textContent = mode === &#x27;draw&#x27;
+        ? &#x27;Draw directly on the canvas&#x27;
+        : mode === &#x27;note&#x27;
+          ? &#x27;Choose a location on the canvas for your note&#x27;
+          : &#x27;Move nodes or select one to trace its connections&#x27;;
+    }
+
+    function updateUndo() {
+      undoButton.disabled = annotationActions.length === 0;
+    }
+
+    function annotationPoint(event) {
+      const box = field.getBoundingClientRect();
+      return [
+        Math.max(0, Math.min(1000, ((event.clientX - box.left) / box.width) * 1000)),
+        Math.max(0, Math.min(1000, ((event.clientY - box.top) / box.height) * 1000))
+      ];
+    }
+
+    function addNote(event) {
+      const box = field.getBoundingClientRect();
+      const left = Math.max(12, Math.min(88, ((event.clientX - box.left) / box.width) * 100));
+      const top = Math.max(7, Math.min(93, ((event.clientY - box.top) / box.height) * 100));
+      const note = appendCanvasNote({ left: `${left}%`, top: `${top}%`, text: &#x27;&#x27; }, true);
+      setMode(&#x27;move&#x27;);
+      note.focus();
+      scheduleSave();
+    }
+
+    toolButtons.forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; setMode(button.dataset.canvasTool)));
+
+    annotationSvg.addEventListener(&#x27;pointerdown&#x27;, (event) =&gt; {
+      if (mode !== &#x27;draw&#x27; || event.button !== 0) return;
+      const [x, y] = annotationPoint(event);
+      const path = document.createElementNS(&#x27;http://www.w3.org/2000/svg&#x27;, &#x27;path&#x27;);
+      path.setAttribute(&#x27;class&#x27;, &#x27;annotation-stroke&#x27;);
+      path.setAttribute(&#x27;d&#x27;, `M ${x} ${y}`);
+      annotationSvg.appendChild(path);
+      annotationSvg.setPointerCapture(event.pointerId);
+      drawing = { id: event.pointerId, path, points: [`M ${x} ${y}`] };
+      annotationActions.push({ type: &#x27;draw&#x27;, element: path });
+      updateUndo();
+    });
+
+    annotationSvg.addEventListener(&#x27;pointermove&#x27;, (event) =&gt; {
+      if (!drawing || event.pointerId !== drawing.id) return;
+      const [x, y] = annotationPoint(event);
+      drawing.points.push(`L ${x} ${y}`);
+      drawing.path.setAttribute(&#x27;d&#x27;, drawing.points.join(&#x27; &#x27;));
+    });
+
+    annotationSvg.addEventListener(&#x27;pointerup&#x27;, (event) =&gt; {
+      if (!drawing || event.pointerId !== drawing.id) return;
+      annotationSvg.releasePointerCapture(event.pointerId);
+      drawing = null;
+      scheduleSave();
+    });
+
+    field.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+      if (mode !== &#x27;note&#x27;) return;
+      if (event.target.closest(&#x27;.annotation-note&#x27;)) return;
+      addNote(event);
+    });
+
+    undoButton.addEventListener(&#x27;click&#x27;, () =&gt; {
+      const action = annotationActions.pop();
+      if (action) action.element.remove();
+      updateUndo();
+      scheduleSave();
+    });
+
+    nodes.forEach((node) =&gt; {
+      let drag = null;
+      node.addEventListener(&#x27;pointerdown&#x27;, (event) =&gt; {
+        if (mode !== &#x27;move&#x27;) return;
+        if (event.button !== 0) return;
+        drag = { id: event.pointerId, startX: event.clientX, startY: event.clientY, moved: false };
+        node.setPointerCapture(event.pointerId);
+      });
+      node.addEventListener(&#x27;pointermove&#x27;, (event) =&gt; {
+        if (!drag || event.pointerId !== drag.id) return;
+        const fieldBox = field.getBoundingClientRect();
+        const moved = Math.hypot(event.clientX - drag.startX, event.clientY - drag.startY) &gt; 4;
+        drag.moved = drag.moved || moved;
+        if (!drag.moved) return;
+        const scale = Number(zoom.value) / 100;
+        const shownX = ((event.clientX - fieldBox.left) / fieldBox.width) * 100;
+        const shownY = ((event.clientY - fieldBox.top) / fieldBox.height) * 100;
+        positions[node.dataset.node] = [
+          Math.max(5, Math.min(95, 50 + (shownX - 50) / scale)),
+          Math.max(4, Math.min(96, 50 + (shownY - 50) / scale))
+        ];
+        node.dataset.dragged = &#x27;true&#x27;;
+        render();
+      });
+      node.addEventListener(&#x27;pointerup&#x27;, (event) =&gt; {
+        if (!drag || event.pointerId !== drag.id) return;
+        node.releasePointerCapture(event.pointerId);
+        if (drag.moved) scheduleSave();
+        drag = null;
+      });
+      node.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+        if (mode !== &#x27;move&#x27;) return;
+        if (node.dataset.dragged === &#x27;true&#x27;) {
+          node.dataset.dragged = &#x27;false&#x27;;
+          event.preventDefault();
+          return;
+        }
+        selectNode(node.dataset.node);
+      });
+    });
+
+    saveEntryButton.addEventListener(&#x27;click&#x27;, saveEntry);
+    clearEntryButton.addEventListener(&#x27;click&#x27;, clearComposer);
+    quickEntry.addEventListener(&#x27;keydown&#x27;, (event) =&gt; {
+      if ((event.ctrlKey || event.metaKey) &amp;&amp; event.key === &#x27;Enter&#x27;) {
+        event.preventDefault();
+        saveEntry();
+      }
+    });
+    entrySearch.addEventListener(&#x27;input&#x27;, renderEntries);
+    currentOnly.addEventListener(&#x27;change&#x27;, renderEntries);
+
+    entryList.addEventListener(&#x27;click&#x27;, (event) =&gt; {
+      const button = event.target.closest(&#x27;[data-entry-action]&#x27;);
+      if (!button) return;
+      const entry = workspaceState.entries.find((item) =&gt; item.id === button.dataset.entryId);
+      if (!entry) return;
+      const action = button.dataset.entryAction;
+
+      if (action === &#x27;open&#x27;) {
+        selectNode(entry.node);
+        nodeFor(entry.node)?.focus();
+      }
+      if (action === &#x27;edit&#x27;) {
+        editingId = entry.id;
+        quickEntry.value = entry.text;
+        entryType.value = entry.type;
+        entryNode.value = entry.node;
+        entryTags.value = (entry.tags || []).join(&#x27;, &#x27;);
+        saveEntryButton.innerHTML = &#x27;&lt;i data-lucide=&quot;save&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt; Update entry&#x27;;
+        if (globalThis.lucide) lucide.createIcons({ attrs: { width: 16, height: 16 } });
+        quickEntry.focus();
+      }
+      if (action === &#x27;pin&#x27;) {
+        const [left, top] = screenPosition(entry.node);
+        const note = appendCanvasNote({
+          left: `${Math.max(12, Math.min(88, left + 8))}%`,
+          top: `${Math.max(7, Math.min(93, top + 8))}%`,
+          text: entry.text
+        }, true);
+        note.focus();
+        saveWorkspace();
+      }
+      if (action === &#x27;done&#x27;) {
+        entry.done = !entry.done;
+        entry.updatedAt = new Date().toISOString();
+        renderEntries();
+        saveWorkspace();
+      }
+      if (action === &#x27;delete&#x27;) {
+        workspaceState.entries = workspaceState.entries.filter((item) =&gt; item.id !== entry.id);
+        if (editingId === entry.id) clearComposer();
+        renderEntries();
+        saveWorkspace();
+      }
+    });
+
+    exportButton.addEventListener(&#x27;click&#x27;, () =&gt; {
+      collectWorkspaceState();
+      const blob = new Blob([JSON.stringify({
+        format: &#x27;mykit-connected-canvas&#x27;,
+        version: 3,
+        exportedAt: new Date().toISOString(),
+        ...workspaceState
+      }, null, 2)], { type: &#x27;application/json&#x27; });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement(&#x27;a&#x27;);
+      link.href = url;
+      link.download = `mykit-mind-dump-${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      saveStatus.textContent = &#x27;Backup exported&#x27;;
+    });
+
+    importInput.addEventListener(&#x27;change&#x27;, async () =&gt; {
+      const file = importInput.files?.[0];
+      if (!file) return;
+      try {
+        const imported = JSON.parse(await file.text());
+        if (!imported || !Array.isArray(imported.entries)) throw new Error(&#x27;Invalid backup&#x27;);
+        workspaceState = {
+          ...workspaceState,
+          ...imported,
+          entries: imported.entries,
+          layouts: imported.layouts || workspaceState.layouts,
+          strokes: Array.isArray(imported.strokes) ? imported.strokes : [],
+          canvasNotes: Array.isArray(imported.canvasNotes) ? imported.canvasNotes : []
+        };
+        annotationSvg.replaceChildren();
+        notesLayer.replaceChildren();
+        workspaceState.strokes.forEach((pathData) =&gt; {
+          const path = document.createElementNS(&#x27;http://www.w3.org/2000/svg&#x27;, &#x27;path&#x27;);
+          path.setAttribute(&#x27;class&#x27;, &#x27;annotation-stroke&#x27;);
+          path.setAttribute(&#x27;d&#x27;, pathData);
+          annotationSvg.appendChild(path);
+        });
+        workspaceState.canvasNotes.forEach((note) =&gt; appendCanvasNote(note));
+        zoom.value = String(workspaceState.zoom || 92);
+        setLayout(true);
+        selectNode(details[workspaceState.selected] ? workspaceState.selected : &#x27;mykit&#x27;);
+        clearComposer();
+        renderEntries();
+        saveWorkspace();
+        saveStatus.textContent = &#x27;Backup restored&#x27;;
+      } catch (error) {
+        saveStatus.textContent = &#x27;That file is not a myKIT backup&#x27;;
+      } finally {
+        importInput.value = &#x27;&#x27;;
+      }
+    });
+
+    zoom.addEventListener(&#x27;input&#x27;, () =&gt; {
+      render();
+      scheduleSave();
+    });
+    new ResizeObserver(() =&gt; {
+      setLayout();
+      render();
+    }).observe(field);
+
+    Object.entries(labels).forEach(([value, label]) =&gt; {
+      const option = document.createElement(&#x27;option&#x27;);
+      option.value = value;
+      option.textContent = label;
+      entryNode.appendChild(option);
+    });
+
+    zoom.value = String(workspaceState.zoom || 92);
+    workspaceState.strokes.forEach((pathData) =&gt; {
+      const path = document.createElementNS(&#x27;http://www.w3.org/2000/svg&#x27;, &#x27;path&#x27;);
+      path.setAttribute(&#x27;class&#x27;, &#x27;annotation-stroke&#x27;);
+      path.setAttribute(&#x27;d&#x27;, pathData);
+      annotationSvg.appendChild(path);
+    });
+    workspaceState.canvasNotes.forEach((note) =&gt; appendCanvasNote(note));
+
+    setLayout(true);
+    selectNode(details[workspaceState.selected] ? workspaceState.selected : &#x27;mykit&#x27;);
+    setMode(&#x27;move&#x27;);
+    updateUndo();
+    renderEntries();
+  })();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>
