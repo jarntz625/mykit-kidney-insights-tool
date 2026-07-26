@@ -79,6 +79,7 @@ import '@fontsource-variable/inter';
 import './styles.css';
 
 const TODAY = 'July 20, 2026';
+const assetPath = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 const palette = {
   teal: '#078f94',
   tealDark: '#05747a',
@@ -143,9 +144,9 @@ const initialMedications = [
 ];
 
 const educationArticles = [
-  { id: 1, title: 'Low Potassium Foods', subtitle: 'Learn which foods are safer for your kidneys.', category: 'Nutrition', length: '4 min read', image: '/assets/education-low-potassium.jpg' },
-  { id: 2, title: 'Staying Active with CKD', subtitle: 'Tips for safe and effective physical activity.', category: 'Lifestyle', length: '5 min read', image: '/assets/education-active-ckd.jpg' },
-  { id: 3, title: 'Understanding Dialysis', subtitle: 'Know what to expect before and after treatment.', category: 'Treatment', length: '7 min read', image: '/assets/education-dialysis.jpg' },
+  { id: 1, title: 'Low Potassium Foods', subtitle: 'Learn which foods are safer for your kidneys.', category: 'Nutrition', length: '4 min read', image: assetPath('assets/education-low-potassium.jpg') },
+  { id: 2, title: 'Staying Active with CKD', subtitle: 'Tips for safe and effective physical activity.', category: 'Lifestyle', length: '5 min read', image: assetPath('assets/education-active-ckd.jpg') },
+  { id: 3, title: 'Understanding Dialysis', subtitle: 'Know what to expect before and after treatment.', category: 'Treatment', length: '7 min read', image: assetPath('assets/education-dialysis.jpg') },
 ];
 
 const fluidHistory = [
@@ -344,7 +345,7 @@ function Header({ activePage, onMenu, onOpenNotifications, onNavigate }) {
           <span className="notification-badge">3</span>
         </button>
         <button className="profile-button" type="button" onClick={() => onNavigate('settings')} aria-label="Open profile settings">
-          <img src="/assets/john-avatar.jpg" alt="John's profile" />
+          <img src={assetPath('assets/john-avatar.jpg')} alt="John's profile" />
           <FaChevronDown aria-hidden="true" />
         </button>
       </div>
@@ -1123,7 +1124,7 @@ function SettingsPage({ openModal }) {
   const update = (key) => (value) => setPreferences((state) => ({ ...state, [key]: value }));
   return (
     <div className="page-shell page-enter">
-      <Card className="profile-card"><img src="/assets/john-avatar.jpg" alt="John" /><div><h2>John Doe</h2><p>Patient ID: KIT-12345678</p><span>City Kidney Center</span></div><button className="secondary-button" type="button" onClick={() => openModal('editProfile')}><FaPen /> Edit Profile</button></Card>
+      <Card className="profile-card"><img src={assetPath('assets/john-avatar.jpg')} alt="John" /><div><h2>John Doe</h2><p>Patient ID: KIT-12345678</p><span>City Kidney Center</span></div><button className="secondary-button" type="button" onClick={() => openModal('editProfile')}><FaPen /> Edit Profile</button></Card>
       <div className="settings-grid">
         <Card><SectionHeader title="Notifications" /><ToggleRow label="Medication reminders" description="Dose alerts and missed-dose follow-ups" checked={preferences.meds} onChange={update('meds')} /><ToggleRow label="Appointment reminders" description="24-hour and 2-hour alerts" checked={preferences.appointments} onChange={update('appointments')} /><ToggleRow label="New lab results" description="Notify when results are ready" checked={preferences.lab} onChange={update('lab')} /><ToggleRow label="Education suggestions" description="Personalized learning recommendations" checked={preferences.education} onChange={update('education')} /></Card>
         <Card><SectionHeader title="Privacy & Security" /><ToggleRow label="Biometric sign-in" description="Use Face ID or fingerprint on supported devices" checked={preferences.biometric} onChange={update('biometric')} /><button className="settings-link" type="button" onClick={() => openModal('password')}><FaLock /><span><strong>Change password</strong><small>Last updated 62 days ago</small></span><FaChevronRight /></button><button className="settings-link" type="button" onClick={() => openModal('privacy')}><FaShieldHeart /><span><strong>Privacy permissions</strong><small>Manage data sharing and consent</small></span><FaChevronRight /></button><button className="settings-link" type="button" onClick={() => openModal('devices')}><FaSliders /><span><strong>Connected devices</strong><small>2 active devices</small></span><FaChevronRight /></button></Card>
